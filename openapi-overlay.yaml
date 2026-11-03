@@ -1,0 +1,583 @@
+overlay: 1.0.0
+info:
+  title: AntsRoute capi documentation enrichments
+  version: 1.0.0
+  description: >
+    Additive documentation layer applied on top of the live OpenAPI spec published at
+    https://app.antsroute.com/v3/api-docs/public. Every action here only adds descriptions,
+    examples, or a missing response schema — it never changes a field's type, requiredness, or
+    structure. Source of truth stays the Java annotations in antsroute-back/web.capi; this file
+    only fills gaps without touching that code. Kept in sync by docs/scripts/refresh-openapi.sh.
+actions:
+  # --- 1. Peripheral DTOs without field-level descriptions ---
+
+  - target: $.components.schemas.PublicAgent.properties.firstName
+    description: PublicAgent.firstName has no description
+    update:
+      description: Agent's first name.
+
+  - target: $.components.schemas.PublicAgent.properties.lastName
+    description: PublicAgent.lastName has no description
+    update:
+      description: Agent's last name.
+
+  - target: $.components.schemas.PublicAgent.properties.email
+    description: PublicAgent.email has no description
+    update:
+      description: Agent's email address — used as the identifier in most /capi/agent endpoints.
+
+  - target: $.components.schemas.PublicAgent.properties.phoneNumber
+    description: PublicAgent.phoneNumber has no description
+    update:
+      description: Agent's phone number.
+
+  - target: $.components.schemas.PublicAgent.properties.defaultVehicle
+    description: PublicAgent.defaultVehicle has no description
+    update:
+      description: >
+        Vehicle assigned to the agent by default. Optional: an agent can have no default
+        vehicle, in which case one is assigned per day through the dispatch schedule.
+
+  - target: $.components.schemas.PublicAgent.properties.skills
+    description: PublicAgent.skills has no description
+    update:
+      description: Skills held by the agent, used to match them against orders requiring them.
+
+  - target: $.components.schemas.PublicAgent.properties.costPerHour
+    description: PublicAgent.costPerHour has no description
+    update:
+      description: Hourly cost of the agent, used in route cost calculations.
+
+  - target: $.components.schemas.PublicAgent.properties.color
+    description: PublicAgent.color has no description
+    update:
+      description: Color used to represent the agent and their routes in the AntsRoute UI.
+
+  - target: $.components.schemas.PublicAgent.properties.externalId
+    description: PublicAgent.externalId has no description
+    update:
+      description: Identifier of the agent in your own system, if synchronized.
+
+  - target: $.components.schemas.TrackingLink.properties.url
+    description: TrackingLink.url has no description
+    update:
+      description: >
+        Public URL the end customer can use to track the order live. Empty if the order is
+        still in the basket (CREATED state).
+
+  # --- 2. Enum values without per-value description ---
+  # ServiceType (SERVICE/PICKUP/DELIVERY) is inlined per schema (no shared component), so each
+  # occurrence needs its own action.
+
+  - target: $.components.schemas.CreateBasketOrder.properties.type
+    description: ServiceType enum (inlined) has no per-value description
+    update:
+      description: >
+        Type of service for this order:<ul><li>SERVICE: a single, standalone
+        intervention.</li><li>PICKUP: a collection of goods from the customer — part of a
+        pickup & delivery pair.</li><li>DELIVERY: a delivery of goods to the customer — part of
+        a pickup & delivery pair.</li></ul>
+
+  - target: $.components.schemas.CreatePlanningOrder.properties.type
+    description: ServiceType enum (inlined) has no per-value description
+    update:
+      description: >
+        Type of service for this order:<ul><li>SERVICE: a single, standalone
+        intervention.</li><li>PICKUP: a collection of goods from the customer — part of a
+        pickup & delivery pair.</li><li>DELIVERY: a delivery of goods to the customer — part of
+        a pickup & delivery pair.</li></ul>
+
+  - target: $.components.schemas.CreateRouteOrder.properties.type
+    description: ServiceType enum (inlined) has no per-value description
+    update:
+      description: >
+        Type of service for this order:<ul><li>SERVICE: a single, standalone
+        intervention.</li><li>PICKUP: a collection of goods from the customer — part of a
+        pickup & delivery pair.</li><li>DELIVERY: a delivery of goods to the customer — part of
+        a pickup & delivery pair.</li></ul>
+
+  - target: $.components.schemas.Order.properties.type
+    description: ServiceType enum (inlined) has no per-value description
+    update:
+      description: >
+        Type of service for this order:<ul><li>SERVICE: a single, standalone
+        intervention.</li><li>PICKUP: a collection of goods from the customer — part of a
+        pickup & delivery pair.</li><li>DELIVERY: a delivery of goods to the customer — part of
+        a pickup & delivery pair.</li></ul>
+
+  - target: $.components.schemas.SearchOrderAvailabilities.properties.type
+    description: ServiceType enum (inlined) has no per-value description
+    update:
+      description: >
+        Type of service for this order:<ul><li>SERVICE: a single, standalone
+        intervention.</li><li>PICKUP: a collection of goods from the customer — part of a
+        pickup & delivery pair.</li><li>DELIVERY: a delivery of goods to the customer — part of
+        a pickup & delivery pair.</li></ul>
+
+  # OrderLocationType (CUSTOMER/CUSTOM/REMOTE) — same situation, inlined per schema.
+
+  - target: $.components.schemas.CreateBasketOrder.properties.orderLocationType
+    description: OrderLocationType enum (inlined) has no per-value description
+    update:
+      description: >
+        Where this order takes place:<ul><li>CUSTOMER: at the customer's registered address
+        (default).</li><li>CUSTOM: at a custom location given in customLocation, distinct from
+        the customer's address.</li><li>REMOTE: no physical location — the order is always
+        considered reachable (no travel time, no geofence check), for services performed
+        off-site (e.g. a phone-based service).</li></ul>
+
+  - target: $.components.schemas.CreatePlanningOrder.properties.orderLocationType
+    description: OrderLocationType enum (inlined) has no per-value description
+    update:
+      description: >
+        Where this order takes place:<ul><li>CUSTOMER: at the customer's registered address
+        (default).</li><li>CUSTOM: at a custom location given in customLocation, distinct from
+        the customer's address.</li><li>REMOTE: no physical location — the order is always
+        considered reachable (no travel time, no geofence check), for services performed
+        off-site (e.g. a phone-based service).</li></ul>
+
+  - target: $.components.schemas.CreateRouteOrder.properties.orderLocationType
+    description: OrderLocationType enum (inlined) has no per-value description
+    update:
+      description: >
+        Where this order takes place:<ul><li>CUSTOMER: at the customer's registered address
+        (default).</li><li>CUSTOM: at a custom location given in customLocation, distinct from
+        the customer's address.</li><li>REMOTE: no physical location — the order is always
+        considered reachable (no travel time, no geofence check), for services performed
+        off-site (e.g. a phone-based service).</li></ul>
+
+  - target: $.components.schemas.Order.properties.orderLocationType
+    description: OrderLocationType enum (inlined) has no per-value description
+    update:
+      description: >
+        Where this order takes place:<ul><li>CUSTOMER: at the customer's registered address
+        (default).</li><li>CUSTOM: at a custom location given in customLocation, distinct from
+        the customer's address.</li><li>REMOTE: no physical location — the order is always
+        considered reachable (no travel time, no geofence check), for services performed
+        off-site (e.g. a phone-based service).</li></ul>
+
+  - target: $.components.schemas.OrderUpdatePublic.properties.orderLocationType
+    description: OrderLocationType enum (inlined) has no per-value description
+    update:
+      description: >
+        Where this order takes place:<ul><li>CUSTOMER: at the customer's registered address
+        (default).</li><li>CUSTOM: at a custom location given in customLocation, distinct from
+        the customer's address.</li><li>REMOTE: no physical location — the order is always
+        considered reachable (no travel time, no geofence check), for services performed
+        off-site (e.g. a phone-based service).</li></ul>
+
+  - target: $.components.schemas.SearchOrderAvailabilities.properties.orderLocationType
+    description: OrderLocationType enum (inlined) has no per-value description
+    update:
+      description: >
+        Where this order takes place:<ul><li>CUSTOMER: at the customer's registered address
+        (default).</li><li>CUSTOM: at a custom location given in customLocation, distinct from
+        the customer's address.</li><li>REMOTE: no physical location — the order is always
+        considered reachable (no travel time, no geofence check), for services performed
+        off-site (e.g. a phone-based service).</li></ul>
+
+  # --- 3. errorCode mis-typed as int, and the ErrorResponse schema missing entirely ---
+  # Verified: com.antsway.antsroute.exception.ErrorCode has no @JsonValue/@JsonFormat override,
+  # so Jackson serializes it as its enum name (string), not the int `value` field. The live
+  # spec's `@Schema(type = "int")` on ErrorResponse.errorCode describes the wrong wire type, and
+  # ErrorResponse itself never appears in components.schemas (every 4xx/5xx response in the spec
+  # has an empty `application/json: {}` content). Values below are the exhaustive list from
+  # com.antsway.antsroute.exception.ErrorCode, grouped exactly as commented in that file — no
+  # business description per value was invented, since none exists in the source.
+
+  - target: $.components.schemas
+    description: ErrorResponse schema is entirely missing from the spec
+    update:
+      ErrorResponse:
+        type: object
+        description: Standard error body returned on 4xx/5xx responses.
+        properties:
+          errorCode:
+            type: string
+            description: >
+              Name of the error code (serialized as the Java enum's name, not an integer,
+              despite what older client code generated from this spec may assume). Grouped by
+              section as commented in the source enum.
+            enum:
+              # Billing
+              - SUBSCRIPTION_CANCELED_OR_UNPAID
+              - SUBSCRIPTION_ALREADY_VALIDATED
+              - PAYMENT_FAILED_CARD_DECLINED
+              - PAYMENT_FAILED_CARD_EXPIRED
+              - PAYMENT_FAILED_INVALID_SECURITY_CODE
+              - SUBSCRIPTION_EMAIL_BLACKLIST
+              - SUBSCRIPTION_IN_TRIAL_MODE
+              - SUBSCRIPTION_WITHOUT_REMOVE_LICENSE
+              - SUBSCRIPTION_RESEND_VALIDATION_FAILED
+              - SUBSCRIPTION_EMAIL_INVALID_DOMAIN
+              # Auth
+              - AUTH_TOKEN_INVALID
+              - TOO_MANY_ATTEMPTS
+              - TWO_FA_INVALID
+              - RECOVERY_CODE_INVALID
+              # Configuration
+              - CONFIGURATION_NOTIFICATION_DISABLE
+              - CONFIGURATION_COMPARTMENT_TANK_DISABLE
+              - CONFIGURATION_ELECTRIC_VEHICLE_DISABLE
+              - CONFIGURATION_CUSTOMER_SCHEDULE_DISABLE
+              - CONFIGURATION_CUSTOMER_REVIEW_DISABLE
+              - CONFIGURATION_CUSTOMER_CONFIRM_RESCHEDULE_DISABLE
+              - CONFIGURATION_ORDER_REPORT_DISABLE
+              - CONFIGURATION_ORDER_PRICE_DISABLE
+              - CONFIGURATION_SERVICE_DISABLED
+              # Enterprise
+              - ENTERPRISE_ORIGIN_ALREADY_ANTSWAY
+              # Global
+              - ALREADY_EXISTS
+              - LOCATION_NOT_SUPPORTED
+              - IMPORT_FAILED
+              - LOCKED_ACTION
+              - NOT_IMPLEMENTED
+              - UNSAFE_CONTENT
+              # IO
+              - IO_OPTIMIZATION_ENGINE_FAILURE
+              - IO_CHARGEBEE_FAILURE
+              - IO_GOOGLE_FAILURE
+              - IO_GIREVE_FAILURE
+              - IO_LICENSE_GENERATION
+              - IO_GEOCODING_FAILED
+              - IO_GEOCODING_PARTIAL_MATCH
+              - IO_TIMEZONE_EXTRACT_FAILED
+              # Task
+              - TASK_NOT_DONE
+              - TASK_ALREADY_DONE
+              - LICENSE_UNAVAILABLE
+              - ACCOUNT_LAST_ONE
+              - ACCOUNT_MOBILE_NUMBER_EXISTS
+              - UNABLE_TO_VALIDATE_MOBILE_NUMBER
+              - UNABLE_TO_VALIDATE_ACCOUNT
+              - CUSTOMER_ACCOUNT_NOT_VALIDATED
+              - ALREADY_VALIDATED_ACCOUNT
+              - CUSTOMER_ALREADY_HAS_ACCOUNT
+              - CUSTOMER_DETAILS_MISSING
+              - ROLE_ALWAYS_USED
+              - AGENT_LICENSE_EXPIRED
+              - SKILL_USED_IN_ORDER_TYPE
+              - SKILL_USED_IN_ORDER_ZONE
+              - SITE_MISMATCH
+              - ONE_SITE_MINIMUM
+              - SITE_ASSIGNED_TO_WAREHOUSE
+              # Agent
+              - AGENT_ABSENT
+              - AGENT_ABSENT_NO_OVERLAP
+              - NON_WORKING_DAY_NO_OVERLAP
+              - AGENT_WORKING_PLAN_OVERLAP
+              - AGENT_WORKING_PLAN_MISMATCH
+              - AGENT_HAS_ROUTE_PLANNED
+              - AGENT_EXTERNAL_ID_DUPLICATE
+              - ORDER_AGENT_MISMATCH
+              - AGENT_HAS_STARTED_ROUTE
+              - AGENT_CANT_VALIDATE_PRIVATE_FIELD
+              - AGENT_ROUTE_DELETED
+              - VEHICLE_ASSIGNED
+              - VEHICLE_ALLOCATION_HAS_ROUTES
+              # Customer
+              - CUSTOMER_EXTERNAL_ID_USED
+              - DESTINATION_ASSIGNED_TO_WAREHOUSE
+              - CUSTOMER_FIELD_MISMATCH
+              - NOT_CUSTOMER_FIELD
+              - CUSTOMER_IN_STARTED_ROUTE
+              - CUSTOMER_ABSENT_NO_OVERLAP
+              - CUSTOMER_ABSENT
+              - CUSTOMER_OPENING_PLAN_OVERLAP
+              - CUSTOMER_OPENING_PLAN_MISMATCH
+              # Sector plan / sector
+              - SECTOR_PLAN_DAY_USED
+              - SECTOR_INTERSECTION
+              # Order report
+              - ORDER_REPORT_GENERATION_ERROR
+              - INVALID_LINK_TYPE
+              - INVALID_REPORT_ID
+              # Route selection / route
+              - NOT_FOUND_OR_FOUND_ONLY_CHILD
+              - ROUTE_CANNOT_START
+              - ROUTE_CANNOT_COMPLETE
+              - ROUTE_ALREADY_STARTED
+              - ROUTE_COMPLETED
+              - ROUTE_NOT_YET_STARTED
+              - ROUTE_MISMATCH
+              - ROUTE_NAME_ALREADY_EXISTS_FOR_THIS_DAY
+              - CANNOT_DUPLICATE_ROUTES_WITH_SAME_NAME
+              - DUPLICATE_ROUTE_ALREADY_IDENTIFIED_FOR_THIS_AGENT
+              - ROUTE_CLONE_PAST_DATE
+              - ROUTE_CLONE_AGENT_ABSENT_ALL_DAY
+              - ROUTE_CLONE_AGENT_NOT_WORKING
+              - ROUTE_CLONE_AGENT_OCCUPIED
+              - ROUTE_CLONE_STARTED_ROUTE
+              - ROUTE_BREAK_ALREADY_STARTED_OR_DONE
+              - ROUTE_BREAK_NOT_STARTED
+              - NOT_TODAY_ROUTE
+              # Orders
+              - ORDER_ALREADY_DONE
+              - ORDER_WRONG_STATE
+              - LIVE_ORDER_ONLY_TODAY
+              - LIVE_ORDER_NOT_YET_DONE
+              - ORDER_FIELD_ALREADY_PRESENT
+              - LINK_EXPIRED
+              - ORDER_FIELD_MISMATCH
+              - ORDER_ALREADY_SIGNED
+              - ORDER_MAX_PHOTO
+              - PAST_ORDER
+              - BAD_RECURRENT_RULE
+              - INFINITE_RECURRENT_RULE
+              - NO_AVAILABILITY
+              - INCONSISTENT_SCHEDULE_DATE
+              - PACKAGE_REFERENCE_ALREADY_EXISTS
+              - ORDER_ALREADY_IN_PROGRESS
+              - IN_PROGRESS_ALREADY_IN_ROUTE
+              - ORDER_NOT_SAME_CUSTOMER
+              - ORDER_NOT_CONSECUTIVE
+              - ORDER_IS_PARENT
+              - NOT_SCORING_LINK
+              - MISSING_MANDATORY_CANCEL_REASON
+              - IMPOSSIBLE_RECURRENT_RULE
+              # Optimization
+              - OPTIMISATION_IN_PROGRESS
+              - OPTIMISATION_REARRANGE_ORDER_FAILED
+              # Attachments
+              - ATTACHMENT_ALREADY_EXISTS
+              - MAX_NUMBER_ATTACHMENTS
+              - ATTACHMENT_NOT_FOUND
+              # Notification
+              - INVALID_NOTIFICATION_TEMPLATE
+              - SMS_QUOTA
+              # Compartment tanks
+              - BAD_COMPARTMENT_TANKS_CONFIGURATION
+              - DATA_INTEGRITY_VIOLATION
+              # Depot
+              - DEPOT_NAME_USED
+              # Webhook
+              - MAX_NUMBER_WEBHOOK_CONFIGS
+              - WEBHOOK_DISABLED
+              # Custom fields
+              - CUSTOM_FIELD_SELECT_REQUIRES_MIN_SIZE
+              - CUSTOM_FIELD_SELECT_OPTION_MUST_EXIST
+              - CUSTOM_FIELD_MANDATORY_VALUE
+              - CUSTOM_FIELD_MOBILE_FILTER
+              - CUSTOM_FIELD_PHOTO_VALUE_MUST_BE_BASE64
+              - NOT_ORDER_PHOTO_FIELD
+              - CUSTOM_FIELD_USED_IN_PRICE_CALC
+              - CUSTOM_FIELD_ROUTE_TRIGGER_REQUIRED
+              - CUSTOM_FIELD_USED_IN_CALCULATED_FIELD
+              - CUSTOM_FIELD_INVALID_CALCULATED_FIELD
+              # Filters
+              - MAX_NUMBER_FILTERS
+              - CONDITIONS_NULL
+              # Items
+              - ITEM_SIZE_MISMATCH
+              - ITEM_MISSING
+              - ITEM_STATE_NULL
+              - ITEM_CHARGED_QUANTITY_IN_SERVICE
+              - ITEM_CAPACITY_VALUE_WITHOUT_TYPE
+              - ITEM_CAPACITY_TYPE_NOT_FOUND
+              - ITEM_TYPE_PACKAGING_REQUIRED
+              - ITEM_TYPE_PACKAGING_TYPE_NOT_FOUND
+              - COMPARTMENT_PRODUCT_MODE_SINGLE_ITEM
+              - COMPARTMENT_ITEM_TYPE_PACKAGING_REQUIRED
+              - COMPARTMENT_ORDER_MIXED_PACKAGING
+              - COMPARTMENT_CAPACITY_REQUIRED_POSITIVE
+              - ITEM_TYPE_NOT_FOUND
+              # Enterprise domain
+              - CANNOT_ACTIVATE_MULTITOUR
+              - DATA_MANAGEMENT_WRONG_VALUE
+              # Update password
+              - BAD_OLD_PASSWORD
+              - BAD_PASSWORD
+              # Roles
+              - ADMIN_ROLE_FORBIDDEN
+              # Booking
+              - BOOKING_SUBDOMAIN_EXISTING
+              - BOOKING_USE_ORDER_TYPE
+              - BOOKING_FEATURE_NOT_ENABLED
+              - BOOKING_TIMESLOT_NOT_USED
+              # Packages
+              - PACKAGE_SIZE_MISMATCH
+              - PACKAGE_MISSING
+              - PACKAGE_STATE_NULL
+              # Order zones
+              - ORDER_ZONE_MAX_OCCURRENCES
+              - ORDER_ZONE_ADD_EXCLUDING_DATE_IN_PAST
+              - ORDER_ZONE_REMOVE_EXCLUDING_DATE_IN_PAST
+          message:
+            type: string
+            description: Human-readable description of the error.
+
+  # Wire the schema above onto every 4xx/5xx response that currently has an empty body.
+  # Verified uniform across all 48 capi endpoints: each declares the same 8 status codes
+  # (400/401/403/404/405/409/413/500), inherited from the shared @ControllerAdvice.
+
+  - target: $.paths[*][*].responses['400'].content['application/json']
+    description: 400 responses have no schema
+    update:
+      schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  - target: $.paths[*][*].responses['401'].content['application/json']
+    description: 401 responses have no schema
+    update:
+      schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  - target: $.paths[*][*].responses['403'].content['application/json']
+    description: 403 responses have no schema
+    update:
+      schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  - target: $.paths[*][*].responses['404'].content['application/json']
+    description: 404 responses have no schema
+    update:
+      schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  - target: $.paths[*][*].responses['405'].content['application/json']
+    description: 405 responses have no schema
+    update:
+      schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  - target: $.paths[*][*].responses['409'].content['application/json']
+    description: 409 responses have no schema
+    update:
+      schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  - target: $.paths[*][*].responses['413'].content['application/json']
+    description: 413 responses have no schema
+    update:
+      schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  - target: $.paths[*][*].responses['500'].content['application/json']
+    description: 500 responses have no schema
+    update:
+      schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+  # --- 4. Parameters/operations with no description ---
+
+  - target: $.paths['/capi/order'].get.parameters[?(@.name=='states')]
+    description: states parameter has no description, unlike the equivalent on customer orders
+    update:
+      description: Filter by one or more order states.
+      example: PLANNED
+
+  - target: $.paths['/capi/order/id/{id}/signature'].get
+    description: Operation has summary only, no description
+    update:
+      description: Returns the end customer's signature collected on order completion, as a JPEG image. Requires the proof-of-completion option to be enabled on the site.
+
+  - target: $.paths['/capi/order/external-id/{externalId}/signature'].get
+    description: Operation has summary only, no description
+    update:
+      description: Returns the end customer's signature collected on order completion, as a JPEG image. Requires the proof-of-completion option to be enabled on the site.
+
+  - target: $.paths['/capi/order/id/{id}/photos/{index}'].get
+    description: Operation has summary only, no description
+    update:
+      description: Returns one attachment collected on order completion (e.g. a photo), as a JPEG image, by its index in the order's attachment list.
+
+  - target: $.paths['/capi/order/id/{id}/photos/{index}'].get.parameters[?(@.name=='index')]
+    description: index parameter has no description
+    update:
+      description: 0-based index of the attachment in the order's attachment list.
+      example: 0
+
+  - target: $.paths['/capi/order/external-id/{externalId}/photos/{index}'].get
+    description: Operation has summary only, no description
+    update:
+      description: Returns one attachment collected on order completion (e.g. a photo), as a JPEG image, by its index in the order's attachment list.
+
+  - target: $.paths['/capi/order/external-id/{externalId}/photos/{index}'].get.parameters[?(@.name=='index')]
+    description: index parameter has no description
+    update:
+      description: 0-based index of the attachment in the order's attachment list.
+      example: 0
+
+  - target: $.paths['/capi/agent/{agentEmail}/absences'].post
+    description: Operation has summary only, no description
+    update:
+      description: Creates an absence for the agent, identified by their email.
+
+  - target: $.paths['/capi/agent/{agentEmail}/absences'].get
+    description: Operation has summary only, no description
+    update:
+      description: Returns the agent's absences, optionally filtered by date range.
+
+  - target: $.paths['/capi/agent/{agentEmail}/absences/{absenceId}'].put
+    description: Operation has summary only, no description
+    update:
+      description: Updates an existing absence of the agent.
+
+  - target: $.paths['/capi/agent/{agentEmail}/absences/{absenceId}'].delete
+    description: Operation has summary only, no description
+    update:
+      description: Deletes an absence of the agent.
+
+  - target: $.paths['/capi/agent/{agentEmail}/absences/{absenceId}'].put.parameters[?(@.name=='absenceId')]
+    description: absenceId parameter has no description
+    update:
+      description: Id of the absence to update, as returned when it was created.
+
+  - target: $.paths['/capi/agent/{agentEmail}/absences/{absenceId}'].delete.parameters[?(@.name=='absenceId')]
+    description: absenceId parameter has no description
+    update:
+      description: Id of the absence to delete, as returned when it was created.
+
+  # --- 5. Full request payload examples ---
+  # Built entirely from the per-field `example` values already present on CreatePlanningOrder /
+  # CreateBasketOrder / Customer / TimeSlot in the base spec — nothing invented.
+
+  - target: $.paths['/capi/order/planning'].post.requestBody.content['application/json']
+    description: No full request payload example
+    update:
+      example:
+        type: SERVICE
+        openDate: "2020-02-15"
+        scheduleDate: "2020-02-15"
+        dueDate: "2020-02-15"
+        duration: 10
+        externalId: ORDERNUMBER-11233
+        comments: Call customer 10 minutes before arriving
+        orderType: The name of a type of service you defined in the application
+        orderLocationType: CUSTOMER
+        timeSlot:
+          start: "10:00"
+          end: "11:30"
+        customer:
+          firstName: John
+          lastName: Doe
+          address: rue du Sergent Blandan 54000 Nancy
+          phoneNumber: "0312345678"
+          email: contact@antsroute.com
+          externalId: CUSTOMER-1234
+
+  - target: $.paths['/capi/order/basket'].post.requestBody.content['application/json']
+    description: No full request payload example
+    update:
+      example:
+        type: SERVICE
+        openDate: "2020-02-15"
+        dueDate: "2020-02-15"
+        duration: 10
+        externalId: ORDERNUMBER-11233
+        comments: Call customer 10 minutes before arriving
+        orderType: The name of a type of service you defined in the application
+        orderLocationType: CUSTOMER
+        customer:
+          firstName: John
+          lastName: Doe
+          address: rue du Sergent Blandan 54000 Nancy
+          phoneNumber: "0312345678"
+          email: contact@antsroute.com
+          externalId: CUSTOMER-1234
+
+  - target: $.paths['/capi/customer'].post.requestBody.content['application/json']
+    description: No full request payload example
+    update:
+      example:
+        firstName: John
+        lastName: Doe
+        address: rue du Sergent Blandan 54000 Nancy
+        phoneNumber: "0312345678"
+        mobileNumber: "+33612345678"
+        email: contact@antsroute.com
+        comments: Be careful of the dog
+        externalId: CUSTOMER-1234

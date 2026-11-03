@@ -20,7 +20,10 @@
       },
       {
         "tab": "API Reference",
-        "openapi": "openapi.json"
+        "openapi": {
+          "source": "openapi.json",
+          "overlays": ["openapi-overlay.yaml"]
+        }
       }
     ]
   }
