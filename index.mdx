@@ -1,0 +1,53 @@
+---
+title: "Introduction"
+description: "Public API used by AntsRoute clients to synchronize their own systems with their AntsRoute data"
+---
+
+The AntsRoute public API (`capi`) lets a client application read and write its own AntsRoute
+data — orders, customers, agents, routes — from an external system (ERP, WMS, custom backend...).
+It is authenticated with an **API key** rather than the OAuth tokens used by the AntsRoute web app
+and mobile app, and every request is scoped to the single enterprise that generated the key.
+
+<CardGroup cols={2}>
+  <Card title="Authentication" icon="key" href="/guides/authentication">
+    How to send your API key and what happens when it is missing or invalid.
+  </Card>
+  <Card title="Order lifecycle" icon="route" href="/guides/order-lifecycle">
+    The states an order moves through, and how pickup & delivery pairs work.
+  </Card>
+  <Card title="Identifiers" icon="fingerprint" href="/guides/identifiers">
+    AntsRoute ids vs. your own external ids, and why most resources support both.
+  </Card>
+  <Card title="Listing & pagination" icon="list" href="/guides/listing-and-pagination">
+    page/size pagination, filtering and sorting on list endpoints.
+  </Card>
+  <Card title="Errors & rate limits" icon="triangle-exclamation" href="/guides/errors-and-rate-limits">
+    Error response shape, HTTP status codes, and the per-key rate limit.
+  </Card>
+</CardGroup>
+
+## Base URL
+
+```
+https://app.antsroute.com
+```
+
+All endpoints below are prefixed with `/capi`.
+
+## Resources covered
+
+| Resource | What it represents |
+| --- | --- |
+| Order (`/capi/order`) | A service, delivery or collect — the unit of work performed for a customer |
+| Customer (`/capi/customer`) | The party an order is performed for |
+| Agent (`/capi/agent`) | The field worker executing routes, their skills, hourly plans and absences |
+| Route (`/capi/route`) | A day of work for one agent: an ordered set of orders |
+| Skill (`/capi/skill`) | A qualification that can be required by an order or held by an agent |
+| Item type (`/capi/item-type`) | A category of goods transported in orders |
+| Package (`/capi/package`) | A shipping package, linked to the orders it is attached to |
+
+<Note>
+  Terms like "order", "agent" and "customer" are the technical names used throughout this
+  documentation. The AntsRoute UI may display different labels per client (e.g. "intervention",
+  "technician", "patient") — the underlying API is unaffected by this.
+</Note>

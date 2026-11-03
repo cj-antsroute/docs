@@ -1,0 +1,33 @@
+---
+title: "Authentication"
+description: "Authenticate your requests with an API key sent in the cakey header"
+---
+
+Every `/capi/**` request is authenticated with an **API key**, not the OAuth tokens used by the
+AntsRoute web app or mobile app. Send it in the **`cakey`** header:
+
+```bash
+curl https://app.antsroute.com/capi/customer \
+  -H "cakey: <your-api-key>"
+```
+
+A key has the form `<prefix>.<secret>` (a 10-character prefix, a dot, a 32-character secret) and
+is generated from the AntsRoute web app, on a specific site — all data returned by the API is
+scoped to that site's enterprise.
+
+<Warning>
+  Store your API key like any other secret. Anyone holding it can read and write data for your
+  whole enterprise through this API.
+</Warning>
+
+## Invalid or missing key
+
+If the `cakey` header is missing, malformed (no `.` separator), or does not match a known key,
+every endpoint returns:
+
+```
+HTTP/1.1 401 Unauthorized
+```
+
+with an empty body. There is no further detail in the response — treat any `401` as "check your
+key", there is nothing else to parse.

@@ -1,0 +1,62 @@
+---
+title: "Errors & rate limits"
+description: "Error response shapes, HTTP status codes, and the per-key rate limit"
+---
+
+## Error shapes
+
+Two JSON shapes are used across the API, depending on the error:
+
+<CodeGroup>
+```json Validation error (400)
+{
+  "messages": [
+    "minDate parameter is missing",
+    "name must not be blank"
+  ]
+}
+```
+
+```json Business error
+{
+  "errorCode": "ALREADY_EXISTS",
+  "message": "Order with this externalId already exists in database"
+}
+```
+</CodeGroup>
+
+Some errors (authentication, authorization, "not found") return an **empty body** with just the
+status code — there is nothing to parse beyond the HTTP status in those cases.
+
+## HTTP status codes
+
+| Status | Meaning | Body |
+| --- | --- | --- |
+| `400` | Validation error (missing/malformed parameter, invalid body) | `{ "messages": [...] }` |
+| `401` | Missing or invalid `cakey` | Empty |
+| `402` | Enterprise license/subscription does not cover this | Empty |
+| `403` | The API key's enterprise is not allowed to perform this action | Empty |
+| `404` | Resource not found (unknown `id`/`externalId`) | Empty |
+| `405` | Method not supported on this path | Empty |
+| `409` | Conflict — e.g. duplicate `externalId`, concurrent report generation | `{ "errorCode", "message" }` |
+| `412` | Unsupported request (e.g. media type) | Empty |
+| `413` | Uploaded file too large (attachments) | Empty |
+| `429` | Rate limit exceeded | Empty |
+| `500` | Unexpected server error | Empty |
+
+## Rate limit
+
+Each API key is limited independently, with two limits enforced together:
+
+- **1000 requests / minute**
+- **10 000 requests / hour**
+
+Exceeding either one returns:
+
+```
+HTTP/1.1 429 Too Many Requests
+X-Rate-Limit-Retry-After-Milliseconds: 4213
+```
+
+`X-Rate-Limit-Retry-After-Milliseconds` is the time to wait before the limit resets — back off
+until then rather than retrying immediately.

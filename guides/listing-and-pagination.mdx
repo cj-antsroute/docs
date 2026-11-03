@@ -1,0 +1,42 @@
+---
+title: "Listing & pagination"
+description: "page/size pagination, filtering and sorting on list endpoints"
+---
+
+List endpoints (`GET /capi/order`, `GET /capi/customer`, and the per-customer order lists) are
+paginated with `page`/`size` query parameters, and wrap results in the same envelope:
+
+```json
+{
+  "totalElements": 134,
+  "elements": [ /* ... */ ]
+}
+```
+
+## Orders — `GET /capi/order`
+
+| Parameter | Default | Notes |
+| --- | --- | --- |
+| `page` | `0` | 0-based |
+| `size` | `10` | max `500` |
+| `minDate` / `maxDate` | — | filters on the order's scheduled date |
+| `states` | — | filters on one or more order statuses |
+
+No `sort` parameter — ordering is fixed internally.
+
+## Customers — `GET /capi/customer`
+
+| Parameter | Default | Notes |
+| --- | --- | --- |
+| `page` | `0` | 0-based |
+| `size` | `10` | max `500` |
+| `includeSectors` | `false` | include each customer's sectors in the response |
+| `sort` | `"id"` | comma-separated attribute names; prefix with `-` for descending (e.g. `-firstName`) |
+
+An unknown attribute in `sort` returns a `400`. Results are always secondarily sorted by `id`
+ascending, so pagination stays stable even when your `sort` value ties on other fields.
+
+<Note>
+  `GET /capi/customer/id/{id}/orders` and `GET /capi/customer/external-id/{externalId}/orders`
+  use the same `page`/`size`/`minDate`/`maxDate`/`states` parameters as `GET /capi/order`.
+</Note>

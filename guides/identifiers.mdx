@@ -1,0 +1,34 @@
+---
+title: "Identifiers: id vs external-id"
+description: "AntsRoute's internal id vs. the external id you provide to link records to your own system"
+---
+
+Most resources (orders, customers) are reachable through two parallel sets of endpoints:
+
+- **`/id/{id}`** — the internal AntsRoute identifier, assigned when the record is created.
+- **`/external-id/{externalId}`** — a free-text identifier **you** provide when creating the
+  record, used to link it back to your own system (ERP, WMS...).
+
+```
+GET /capi/order/id/{id}
+GET /capi/order/external-id/{externalId}
+
+GET /capi/customer/id/{id}
+GET /capi/customer/external-id/{externalId}
+```
+
+`externalId` is unique **per site** — AntsRoute rejects creating a second order or customer with
+an `externalId` already used on the same site:
+
+```json
+{
+  "errorCode": "ALREADY_EXISTS",
+  "message": "Order with this externalId already exists in database"
+}
+```
+
+<Tip>
+  If your system already has its own identifiers for orders and customers, pass them as
+  `externalId` on creation and use the `external-id/{externalId}` endpoints afterwards — you then
+  never need to store or look up the AntsRoute-side `id`.
+</Tip>

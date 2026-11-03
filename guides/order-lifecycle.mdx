@@ -1,0 +1,41 @@
+---
+title: "Order lifecycle"
+description: "States an order moves through, and how pickup & delivery pairs work"
+---
+
+An order (`service`/`delivery`/`collect` in the API) always belongs to a `Customer` and carries a
+`status` that traces its lifecycle. States are not strictly sequential — an order can skip or
+revisit several of them depending on how it is planned and executed.
+
+| Status | Meaning |
+| --- | --- |
+| `CREATED` | In the basket: no date assigned yet, waiting to be scheduled. |
+| `UNASSIGNED` | A date is set, but the order is not attached to any route. |
+| `PLANNED` | Assigned to a route. |
+| `PENDING` | Same as `PLANNED`, flagged as awaiting the end customer's confirmation. |
+| `CONFIRMED` | Same as `PLANNED`, with the end customer's confirmation received. |
+| `IN_PROGRESS` | The agent is currently performing it. |
+| `DONE` | Completed by the agent. |
+| `CANCELED` | Canceled by the agent. |
+| `DELETED` | Archived (soft delete). |
+| `POSTPONED` | Set aside by the agent during their route; goes back to pending once the route ends. |
+| `REPROGRAMMED` | The order was canceled and a **new** order was created to replace it; this is the status of the original, kept for traceability. |
+
+<Tip>
+  To move an order out of the basket onto a specific day, use
+  `PUT /capi/order/id/{id}/schedule/{scheduledDate}`. To put planned orders back in the basket,
+  use `PUT /capi/order/unschedule`.
+</Tip>
+
+## Pickup & delivery
+
+Orders can represent a standalone operation (`SERVICE`) or be part of a **pickup & delivery**
+pair (`PICKUP` + `DELIVERY`) — used by clients whose activity is collection/delivery rather than
+on-site service. In that mode, every order exists as a pair: a **parent** order (the actual
+pickup or delivery, carrying most of the information) and a **child** order (the corresponding
+loading/unloading step). The child must be validated before its paired parent order can be
+completed.
+
+This is independent from the *displayed* terminology (which can show "pickup"/"delivery" even for
+a `SERVICE` order, depending on client configuration) — `SERVICE`/`PICKUP`/`DELIVERY` is the
+underlying technical type, not a label.
