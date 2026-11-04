@@ -1,0 +1,110 @@
+---
+title: "Creating orders"
+description: "Standard request shapes for POST /capi/order/planning depending on whether pickup & delivery is enabled on your site"
+---
+
+The shape of an order-creation request depends on whether **pickup & delivery** is enabled on
+your site (see [Order lifecycle](/guides/order-lifecycle)). The `type` field picks the mode, and
+only `DELIVERY`/`COLLECT` use the `loading`/`unloading` fields.
+
+<Warning>
+  `DELIVERY` and `COLLECT` require the pickup & delivery option to be enabled on your site. This
+  is documented in the API's own schema, but the server does **not** currently enforce it —
+  sending these types without the option does not return a clean rejection. Confirm with
+  AntsRoute whether your site has the option before relying on this mode.
+</Warning>
+
+## Mode 1 — Standalone service (`type: SERVICE`)
+
+Use this when pickup & delivery is disabled, or for any standalone operation (maintenance,
+health visit, delivery with no separate loading step). `loading`/`unloading` must be left out.
+
+```json
+POST /capi/order/planning
+{
+  "type": "SERVICE",
+  "customer": { "id": 15467 },
+  "scheduleDate": "2026-11-10",
+  "duration": 15,
+  "timeSlot": { "start": "10:00", "end": "12:00" }
+}
+```
+
+`customer` identifies who the service is performed for. One order is created, with no child.
+
+## Mode 2 — Pickup & delivery pair
+
+Requires the option enabled on your site. Every pickup & delivery order is created as a **pair**:
+one call creates both the order you're describing (the **parent**) and a second order (the
+**child**) for the matching loading/unloading step — you never create the child separately.
+
+The mapping is **not** `loading → pickup` / `unloading → delivery`. It's the type of the order
+you're creating that decides which field to send:
+
+| You're creating... | `type` | Field to send | What AntsRoute does with it |
+| --- | --- | --- | --- |
+| A delivery | `DELIVERY` | `loading` | Creates a `COLLECT` child order at `loading.location` |
+| A collect | `COLLECT` | `unloading` | Creates a `DELIVERY` child order at `unloading.location` |
+
+`customer` stays the end customer (who receives the delivery, or whose goods are collected).
+`loading`/`unloading.location` describes a **different** place — typically a warehouse or
+depot — given as a free-form address, not an existing customer id: AntsRoute finds or creates a
+customer record for it automatically.
+
+### Creating a delivery (`type: DELIVERY`)
+
+```json
+POST /capi/order/planning
+{
+  "type": "DELIVERY",
+  "customer": { "id": 15467 },
+  "scheduleDate": "2026-11-10",
+  "duration": 10,
+  "loading": {
+    "location": {
+      "name": "Warehouse A",
+      "address": "12 rue de la Logistique, 54000 Nancy",
+      "latitude": 48.69,
+      "longitude": 6.18
+    },
+    "duration": 15,
+    "timeSlot": { "start": "08:00", "end": "09:00" },
+    "comments": "Load fragile packages first"
+  }
+}
+```
+
+This creates two orders: the `DELIVERY` to customer `15467`, and a `COLLECT` child at "Warehouse
+A" that must be completed first.
+
+### Creating a collect (`type: COLLECT`)
+
+```json
+POST /capi/order/planning
+{
+  "type": "COLLECT",
+  "customer": { "id": 15467 },
+  "scheduleDate": "2026-11-10",
+  "duration": 10,
+  "unloading": {
+    "location": {
+      "name": "Sorting center B",
+      "address": "5 avenue du Tri, 57000 Metz",
+      "latitude": 49.12,
+      "longitude": 6.17
+    },
+    "duration": 15,
+    "timeSlot": { "start": "14:00", "end": "15:00" }
+  }
+}
+```
+
+This creates the `COLLECT` from customer `15467`, and a `DELIVERY` child at "Sorting center B".
+
+<Note>
+  `POST /capi/order/basket` takes the same `type`/`loading`/`unloading` shape — it just drops
+  `scheduleDate` (the order goes to the basket, unscheduled) and adds `openDate`/`dueDate`
+  instead. See the [API reference](/api-reference) for the full field list of `loading` and
+  `unloading` (`duration`, `timeSlot`, `comments`, and the completion-related fields used when
+  updating an order).
+</Note>

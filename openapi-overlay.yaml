@@ -66,53 +66,98 @@ actions:
         still in the basket (CREATED state).
 
   # --- 2. Enum values without per-value description ---
-  # ServiceType (SERVICE/PICKUP/DELIVERY) is inlined per schema (no shared component), so each
+  # `type` (com.antsway.antsroute.web.capi.domain.Type: SERVICE/COLLECT/DELIVERY — NOT the
+  # internal ServiceType enum, which uses PICKUP instead of COLLECT) has its own rich
+  # @Schema(enumAsRef = true, description = "...") in Type.java, but springdoc does not surface
+  # it here: each usage site has a field-level @Schema that overrides it with a bare "Type of
+  # the order to create", and emits no `enum` array at all. Text below is copied verbatim from
+  # Type.java's own annotation, not invented. Inlined per schema (no shared component), so each
   # occurrence needs its own action.
 
   - target: $.components.schemas.CreateBasketOrder.properties.type
-    description: ServiceType enum (inlined) has no per-value description
+    description: type has no enum values and the wrong/overridden description
     update:
+      enum: [SERVICE, COLLECT, DELIVERY]
       description: >
-        Type of service for this order:<ul><li>SERVICE: a single, standalone
-        intervention.</li><li>PICKUP: a collection of goods from the customer — part of a
-        pickup & delivery pair.</li><li>DELIVERY: a delivery of goods to the customer — part of
-        a pickup & delivery pair.</li></ul>
+        Specify the type to differentiate service/delivery/collect:<ul><li>SERVICE: simple
+        service with no need to manage linked loading/unloading. This type should be used for
+        all maintenance, health services or delivery/collect without linked
+        loading/unloading.</li><li>DELIVERY: delivery type with linked loading information
+        (location, duration of loading, and specific loading time slot). Pickup/delivery option
+        must be activated on the site to use this type.</li><li>COLLECT: collect type with
+        linked unloading information (location, duration of unloading, specific unloading time
+        slot). Pickup/delivery option must be activated on the site to use this
+        type.</li></ul><br>Note: this is the capi wire value, distinct from the internal
+        ServiceType enum which names the same "collect" case PICKUP instead of COLLECT — use
+        COLLECT in API requests.
 
   - target: $.components.schemas.CreatePlanningOrder.properties.type
-    description: ServiceType enum (inlined) has no per-value description
+    description: type has no enum values and the wrong/overridden description
     update:
+      enum: [SERVICE, COLLECT, DELIVERY]
       description: >
-        Type of service for this order:<ul><li>SERVICE: a single, standalone
-        intervention.</li><li>PICKUP: a collection of goods from the customer — part of a
-        pickup & delivery pair.</li><li>DELIVERY: a delivery of goods to the customer — part of
-        a pickup & delivery pair.</li></ul>
+        Specify the type to differentiate service/delivery/collect:<ul><li>SERVICE: simple
+        service with no need to manage linked loading/unloading. This type should be used for
+        all maintenance, health services or delivery/collect without linked
+        loading/unloading.</li><li>DELIVERY: delivery type with linked loading information
+        (location, duration of loading, and specific loading time slot). Pickup/delivery option
+        must be activated on the site to use this type.</li><li>COLLECT: collect type with
+        linked unloading information (location, duration of unloading, specific unloading time
+        slot). Pickup/delivery option must be activated on the site to use this
+        type.</li></ul><br>Note: this is the capi wire value, distinct from the internal
+        ServiceType enum which names the same "collect" case PICKUP instead of COLLECT — use
+        COLLECT in API requests.
 
   - target: $.components.schemas.CreateRouteOrder.properties.type
-    description: ServiceType enum (inlined) has no per-value description
+    description: type has no enum values and the wrong/overridden description
     update:
+      enum: [SERVICE, COLLECT, DELIVERY]
       description: >
-        Type of service for this order:<ul><li>SERVICE: a single, standalone
-        intervention.</li><li>PICKUP: a collection of goods from the customer — part of a
-        pickup & delivery pair.</li><li>DELIVERY: a delivery of goods to the customer — part of
-        a pickup & delivery pair.</li></ul>
+        Specify the type to differentiate service/delivery/collect:<ul><li>SERVICE: simple
+        service with no need to manage linked loading/unloading. This type should be used for
+        all maintenance, health services or delivery/collect without linked
+        loading/unloading.</li><li>DELIVERY: delivery type with linked loading information
+        (location, duration of loading, and specific loading time slot). Pickup/delivery option
+        must be activated on the site to use this type.</li><li>COLLECT: collect type with
+        linked unloading information (location, duration of unloading, specific unloading time
+        slot). Pickup/delivery option must be activated on the site to use this
+        type.</li></ul><br>Note: this is the capi wire value, distinct from the internal
+        ServiceType enum which names the same "collect" case PICKUP instead of COLLECT — use
+        COLLECT in API requests.
 
   - target: $.components.schemas.Order.properties.type
-    description: ServiceType enum (inlined) has no per-value description
+    description: type has no enum values and the wrong/overridden description
     update:
+      enum: [SERVICE, COLLECT, DELIVERY]
       description: >
-        Type of service for this order:<ul><li>SERVICE: a single, standalone
-        intervention.</li><li>PICKUP: a collection of goods from the customer — part of a
-        pickup & delivery pair.</li><li>DELIVERY: a delivery of goods to the customer — part of
-        a pickup & delivery pair.</li></ul>
+        Specify the type to differentiate service/delivery/collect:<ul><li>SERVICE: simple
+        service with no need to manage linked loading/unloading. This type should be used for
+        all maintenance, health services or delivery/collect without linked
+        loading/unloading.</li><li>DELIVERY: delivery type with linked loading information
+        (location, duration of loading, and specific loading time slot). Pickup/delivery option
+        must be activated on the site to use this type.</li><li>COLLECT: collect type with
+        linked unloading information (location, duration of unloading, specific unloading time
+        slot). Pickup/delivery option must be activated on the site to use this
+        type.</li></ul><br>Note: this is the capi wire value, distinct from the internal
+        ServiceType enum which names the same "collect" case PICKUP instead of COLLECT — use
+        COLLECT in API requests.
 
   - target: $.components.schemas.SearchOrderAvailabilities.properties.type
-    description: ServiceType enum (inlined) has no per-value description
+    description: type has no enum values and the wrong/overridden description
     update:
+      enum: [SERVICE, COLLECT, DELIVERY]
       description: >
-        Type of service for this order:<ul><li>SERVICE: a single, standalone
-        intervention.</li><li>PICKUP: a collection of goods from the customer — part of a
-        pickup & delivery pair.</li><li>DELIVERY: a delivery of goods to the customer — part of
-        a pickup & delivery pair.</li></ul>
+        Specify the type to differentiate service/delivery/collect:<ul><li>SERVICE: simple
+        service with no need to manage linked loading/unloading. This type should be used for
+        all maintenance, health services or delivery/collect without linked
+        loading/unloading.</li><li>DELIVERY: delivery type with linked loading information
+        (location, duration of loading, and specific loading time slot). Pickup/delivery option
+        must be activated on the site to use this type.</li><li>COLLECT: collect type with
+        linked unloading information (location, duration of unloading, specific unloading time
+        slot). Pickup/delivery option must be activated on the site to use this
+        type.</li></ul><br>Note: this is the capi wire value, distinct from the internal
+        ServiceType enum which names the same "collect" case PICKUP instead of COLLECT — use
+        COLLECT in API requests.
 
   # OrderLocationType (CUSTOMER/CUSTOM/REMOTE) — same situation, inlined per schema.
 

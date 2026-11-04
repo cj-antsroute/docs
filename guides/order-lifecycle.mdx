@@ -29,13 +29,24 @@ revisit several of them depending on how it is planned and executed.
 
 ## Pickup & delivery
 
-Orders can represent a standalone operation (`SERVICE`) or be part of a **pickup & delivery**
-pair (`PICKUP` + `DELIVERY`) — used by clients whose activity is collection/delivery rather than
-on-site service. In that mode, every order exists as a pair: a **parent** order (the actual
-pickup or delivery, carrying most of the information) and a **child** order (the corresponding
-loading/unloading step). The child must be validated before its paired parent order can be
-completed.
+Orders can represent a standalone operation (`type: SERVICE`) or be part of a **pickup &
+delivery** pair (`type: COLLECT` or `DELIVERY`) — used by clients whose activity is
+collection/delivery rather than on-site service. In that mode, every order exists as a pair: a
+**parent** order (the actual collect or delivery, carrying most of the information, created via
+the `loading`/`unloading` field) and a **child** order (the corresponding loading/unloading step,
+created automatically for you).
+
+<Warning>
+  `COLLECT` and `DELIVERY` require the pickup & delivery option to be enabled on your site. This
+  is stated in the API's own schema documentation, but **not actually enforced** by the server at
+  the time of writing — sending one of these types on a site without the option does not return a
+  clean error, the resulting behavior is undefined. Check with AntsRoute whether the option is
+  enabled before relying on these types.
+</Warning>
 
 This is independent from the *displayed* terminology (which can show "pickup"/"delivery" even for
-a `SERVICE` order, depending on client configuration) — `SERVICE`/`PICKUP`/`DELIVERY` is the
+a `SERVICE` order, depending on client configuration) — `SERVICE`/`COLLECT`/`DELIVERY` is the
 underlying technical type, not a label.
+
+See [Creating orders](/guides/creating-orders) for complete request examples in both modes,
+including how `loading`/`unloading` map to `DELIVERY`/`COLLECT`.

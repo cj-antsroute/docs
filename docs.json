@@ -13,6 +13,7 @@
           "index",
           "guides/authentication",
           "guides/order-lifecycle",
+          "guides/creating-orders",
           "guides/identifiers",
           "guides/listing-and-pagination",
           "guides/errors-and-rate-limits"
