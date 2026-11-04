@@ -14,6 +14,22 @@ only `DELIVERY`/`COLLECT` use the `loading`/`unloading` fields.
   AntsRoute whether your site has the option before relying on this mode.
 </Warning>
 
+## How `customer` is resolved
+
+`customer` is never a plain reference — AntsRoute looks up (or creates) a customer from the
+fields you send, in this order: `externalId` if given, otherwise `id` if non-zero, otherwise a
+match on `(address, lastName, firstName)`. **`lastName` and `address` are required on every
+order-creation request, even when you also send `id` or `externalId`** — and if a match is
+found, that customer's record is overwritten with whatever you sent (first/last name, address,
+phone, email...). Sending stale data for an existing customer's `id`/`externalId` will silently
+overwrite their current info.
+
+<Tip>
+  To target an existing customer without risking an overwrite from stale local data, re-send the
+  values you already have for them (from a prior `GET`), not placeholder values — see
+  [Identifiers](/guides/identifiers) for `id` vs. `externalId`.
+</Tip>
+
 ## Mode 1 — Standalone service (`type: SERVICE`)
 
 Use this when pickup & delivery is disabled, or for any standalone operation (maintenance,
@@ -23,7 +39,11 @@ health visit, delivery with no separate loading step). `loading`/`unloading` mus
 POST /capi/order/planning
 {
   "type": "SERVICE",
-  "customer": { "id": 15467 },
+  "customer": {
+    "externalId": "CUSTOMER-1234",
+    "lastName": "Doe",
+    "address": "rue du Sergent Blandan 54000 Nancy"
+  },
   "scheduleDate": "2026-11-10",
   "duration": 15,
   "timeSlot": { "start": "10:00", "end": "12:00" }
@@ -57,7 +77,11 @@ customer record for it automatically.
 POST /capi/order/planning
 {
   "type": "DELIVERY",
-  "customer": { "id": 15467 },
+  "customer": {
+    "externalId": "CUSTOMER-1234",
+    "lastName": "Doe",
+    "address": "rue du Sergent Blandan 54000 Nancy"
+  },
   "scheduleDate": "2026-11-10",
   "duration": 10,
   "loading": {
@@ -74,8 +98,8 @@ POST /capi/order/planning
 }
 ```
 
-This creates two orders: the `DELIVERY` to customer `15467`, and a `COLLECT` child at "Warehouse
-A" that must be completed first.
+This creates two orders: the `DELIVERY` to customer `CUSTOMER-1234`, and a `COLLECT` child at
+"Warehouse A" that must be completed first.
 
 ### Creating a collect (`type: COLLECT`)
 
@@ -83,7 +107,11 @@ A" that must be completed first.
 POST /capi/order/planning
 {
   "type": "COLLECT",
-  "customer": { "id": 15467 },
+  "customer": {
+    "externalId": "CUSTOMER-1234",
+    "lastName": "Doe",
+    "address": "rue du Sergent Blandan 54000 Nancy"
+  },
   "scheduleDate": "2026-11-10",
   "duration": 10,
   "unloading": {
@@ -99,7 +127,8 @@ POST /capi/order/planning
 }
 ```
 
-This creates the `COLLECT` from customer `15467`, and a `DELIVERY` child at "Sorting center B".
+This creates the `COLLECT` from customer `CUSTOMER-1234`, and a `DELIVERY` child at "Sorting
+center B".
 
 <Note>
   `POST /capi/order/basket` takes the same `type`/`loading`/`unloading` shape — it just drops
