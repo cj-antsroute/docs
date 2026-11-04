@@ -3,7 +3,7 @@
   "theme": "mint",
   "name": "AntsRoute Public API",
   "colors": {
-    "primary": "#2E6B5E"
+    "primary": "#007AFF"
   },
   "navigation": {
     "tabs": [
@@ -31,5 +31,8 @@
   "logo": {
     "light": "/images/logotype-antsroute-1.png",
     "dark": "/images/logotype-antsroute-1.png"
+  },
+  "appearance": {
+    "default": "light"
   }
 }
