@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "willow",
   "name": "AntsRoute Public API",
   "colors": {
     "primary": "#2E6B5E"
