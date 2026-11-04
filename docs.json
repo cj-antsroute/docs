@@ -27,5 +27,9 @@
         }
       }
     ]
+  },
+  "logo": {
+    "light": "/images/logotype-antsroute-1.png",
+    "dark": "/images/logotype-antsroute-1.png"
   }
 }
