@@ -4,7 +4,8 @@
   "name": "AntsRoute Public API",
   "colors": {
     "primary": "#007AFF",
-    "light": "#FFFFFF"
+    "light": "#FFFFFF",
+    "dark": "#007AFF"
   },
   "navigation": {
     "tabs": [
